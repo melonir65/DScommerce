@@ -1,5 +1,6 @@
 package com.rafaelmeloni.dscommerce.entities;
 
+import com.rafaelmeloni.dscommerce.enums.OrderStatus;
 import jakarta.persistence.*;
 
 import java.time.Instant;

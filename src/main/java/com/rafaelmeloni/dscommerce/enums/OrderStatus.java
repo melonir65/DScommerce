@@ -1,4 +1,4 @@
-package com.rafaelmeloni.dscommerce.entities;
+package com.rafaelmeloni.dscommerce.enums;
 
 public enum OrderStatus {
 
