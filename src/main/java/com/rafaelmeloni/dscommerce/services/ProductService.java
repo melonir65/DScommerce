@@ -9,7 +9,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 
 
 
@@ -52,6 +51,13 @@ public class ProductService {
         Product entity = productRepository.getReferenceById(id);
         copyDtoToEntity(productDTO,entity);
         return  new ProductDTO(entity);
+    }
+
+    @Transactional
+    public void  delete (Long id) {
+
+        productRepository.deleteById(id);
+
     }
 
     private void copyDtoToEntity(ProductDTO productDTO, Product entity) {

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
+
 
 
 @RestController
@@ -45,6 +45,13 @@ public class ProductController {
     public ResponseEntity<ProductDTO> update(@PathVariable Long id, @RequestBody ProductDTO productDTO) {
         ProductDTO dto = productService.update(id, productDTO);
         return ResponseEntity.ok(dto);
+
+    }
+
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<ProductDTO> delete(@PathVariable Long id) {
+        productService.delete(id);
+        return ResponseEntity.noContent().build();
 
     }
 
