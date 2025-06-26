@@ -3,11 +3,14 @@ package com.rafaelmeloni.dscommerce.services;
 import com.rafaelmeloni.dscommerce.dto.ProductDTO;
 import com.rafaelmeloni.dscommerce.entities.Product;
 import com.rafaelmeloni.dscommerce.repositories.ProductRepository;
-import com.rafaelmeloni.dscommerce.services.exceptions.ResourceNotFoundexception;
+import com.rafaelmeloni.dscommerce.services.exceptions.DatabaseException;
+import com.rafaelmeloni.dscommerce.services.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 
@@ -22,7 +25,7 @@ public class ProductService {
     @Transactional(readOnly = true)
     public ProductDTO findById(long id) {
 
-        Product product = productRepository.findById(id).orElseThrow(()-> new ResourceNotFoundexception("Id not found"));
+        Product product = productRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Resource not found with id " + id));
         return  new ProductDTO(product);
 
 
@@ -54,11 +57,17 @@ public class ProductService {
         return  new ProductDTO(entity);
     }
 
-    @Transactional
-    public void  delete (Long id) {
-
-        productRepository.deleteById(id);
-
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public void delete(Long id) {
+        if (!productRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Resource not found with id " + id);
+        }
+        try {
+            productRepository.deleteById(id);
+        }
+        catch (DataIntegrityViolationException e) {
+            throw new DatabaseException("Referential integrity violation");
+        }
     }
 
     private void copyDtoToEntity(ProductDTO productDTO, Product entity) {
